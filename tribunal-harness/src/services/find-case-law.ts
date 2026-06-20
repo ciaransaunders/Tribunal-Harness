@@ -317,3 +317,35 @@ export async function verifyCitation(input: { citation?: string; caseName?: stri
 export function _clearVerifyCache(): void {
     verifyCache.clear();
 }
+
+export interface JudgmentMarkdown {
+    slug: string;
+    status: import("./pdf-to-markdown").PdfStatus;
+    markdown?: string;
+    pages?: number;
+    sourceUrl: string;
+    detail?: string;
+}
+
+/**
+ * Fetch a found judgment as Markdown (TNA serves the PDF at /<slug>/data.pdf),
+ * so the engine can read the full judgment as clean Markdown before reasoning
+ * over it — rather than feeding raw PDF bytes to the model. Never throws.
+ */
+export async function getJudgmentMarkdown(slug: string): Promise<JudgmentMarkdown> {
+    const clean = slug.replace(/^\/+|\/+$/g, "");
+    const sourceUrl = `${TNA_BASE}/${clean}/data.pdf`;
+    if (!clean) {
+        return { slug, status: "error", sourceUrl, detail: "Empty judgment slug." };
+    }
+    const { fetchPdfAsMarkdown } = await import("./pdf-to-markdown");
+    const res = await fetchPdfAsMarkdown(sourceUrl);
+    return {
+        slug: clean,
+        status: res.status,
+        markdown: res.markdown,
+        pages: res.pages,
+        sourceUrl,
+        detail: res.detail,
+    };
+}
