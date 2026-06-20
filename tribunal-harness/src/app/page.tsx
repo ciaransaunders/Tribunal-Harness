@@ -10,6 +10,11 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type AnalysisResults = Partial<AnalyseResponse> & { error?: string };
 
+// Plain-English, reassuring message for a stressed litigant-in-person.
+// The technical detail is logged to the console for debugging; the user sees this.
+const ANALYSIS_ERROR_MESSAGE =
+    "We couldn't complete your analysis just now. This is usually a temporary connection problem, not a problem with your case or anything you did. Please check your internet connection and try again in a moment. Your details have not been lost.";
+
 export default function HomePage() {
     const [stage, setStage] = useState<"input" | "analyzing" | "results">("input");
     const [results, setResults] = useState<AnalysisResults | null>(null);
@@ -46,7 +51,8 @@ export default function HomePage() {
 
             setStage("results");
         } catch (err) {
-            setResults({ error: String(err) });
+            console.error("Analysis request failed:", err);
+            setResults({ error: ANALYSIS_ERROR_MESSAGE });
             setStage("results");
         }
     };
@@ -73,7 +79,8 @@ export default function HomePage() {
 
             setStage("results");
         } catch (err) {
-            setResults({ error: String(err) });
+            console.error("Document triage request failed:", err);
+            setResults({ error: ANALYSIS_ERROR_MESSAGE });
             setStage("results");
         }
     }, []);

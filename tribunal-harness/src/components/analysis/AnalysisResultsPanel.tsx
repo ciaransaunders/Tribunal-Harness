@@ -17,8 +17,8 @@ export function AnalysisResultsPanel({ results, timelineStages }: AnalysisResult
         return (
             <div style={{ position: "relative", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Card variant="wireframe" style={{ borderColor: "rgba(239, 68, 68, 0.3)" }}>
-                    <h3 style={{ color: "var(--color-error-coral)", marginBottom: "0.5rem" }}>Analysis Failed</h3>
-                    <p style={{ color: "var(--color-text-secondary)", fontSize: "0.9rem" }}>{results.error}</p>
+                    <h3 style={{ color: "var(--color-error-coral)", marginBottom: "0.5rem" }}>Analysis couldn&apos;t finish</h3>
+                    <p style={{ color: "var(--color-text-secondary)", fontSize: "0.9rem", lineHeight: 1.6 }}>{results.error}</p>
                 </Card>
             </div>
         );

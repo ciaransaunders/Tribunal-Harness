@@ -48,12 +48,26 @@ export default function NavBar() {
                         style={{ position: "relative" }}
                         onMouseEnter={() => setTrustOpen(true)}
                         onMouseLeave={() => setTrustOpen(false)}
+                        onFocus={() => setTrustOpen(true)}
+                        onBlur={(e) => {
+                            // Close only when focus leaves the whole dropdown group
+                            if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+                                setTrustOpen(false);
+                            }
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === "Escape") {
+                                setTrustOpen(false);
+                            }
+                        }}
                     >
                         <button
+                            type="button"
                             className="text-sm font-medium transition-colors text-gray-300 hover:text-purple-400 glass-text"
                             style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}
                             aria-haspopup="true"
                             aria-expanded={trustOpen}
+                            onClick={() => setTrustOpen((open) => !open)}
                         >
                             Trust
                             <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor" style={{ opacity: 0.8, transition: "transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)", transform: trustOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
