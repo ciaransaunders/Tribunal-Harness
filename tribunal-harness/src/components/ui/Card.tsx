@@ -12,7 +12,8 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         const variants = {
             solid: "bg-[var(--color-bg-secondary)] border border-[var(--color-border-subtle)]",
             wireframe: "bg-transparent border border-[rgba(255,255,255,0.06)]",
-            glass: "bg-[rgba(255,255,255,0.03)] backdrop-blur-md border border-[rgba(255,255,255,0.1)]",
+            // Liquid Glass: no hard border — a subtle edge comes from a ring (box-shadow), per HANDOFF.md §8.
+            glass: "bg-[rgba(255,255,255,0.03)] backdrop-blur-md ring-1 ring-white/10",
         };
 
         return (
