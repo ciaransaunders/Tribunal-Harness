@@ -145,6 +145,41 @@ describe("calculateDeadline — ACAS clock-stopping", () => {
         const result = calculateDeadline("2025-01-01");
         expect(result.acas_extended_deadline).toBeUndefined();
     });
+
+    it("handles Day A falling after the base deadline (remainder days is 0)", () => {
+        // Act: 1 Jan 2025. Base deadline: 31 Mar 2025 (Monday)
+        // Day A: 10 Apr 2025 (after base deadline)
+        // Day B: 15 Apr 2025
+        // remainderDays = max(0, 31 Mar - 10 Apr) = 0
+        // Extended deadline = 15 Apr + 0 days = 15 Apr
+        // One month from Day B = 15 May
+        // Claimant gets 15 May (the longer)
+        const result = calculateDeadline("2025-01-01", "2025-04-10", "2025-04-15");
+        expect(result.acas_extended_deadline).toBe("2025-05-15");
+    });
+
+    it("handles inverted dates where Day A > Day B", () => {
+        // Act: 1 Jan 2025. Base deadline: 31 Mar 2025 (Monday)
+        // Day A: 15 Feb 2025 (44 days remaining to 31 Mar)
+        // Day B: 1 Feb 2025 (invalid/inverted, but function should process it safely)
+        // Extended deadline: 1 Feb + 44 days = 17 Mar 2025
+        // One month from Day B = 1 Mar 2025
+        // Claimant gets 17 Mar (the longer)
+        const result = calculateDeadline("2025-01-01", "2025-02-15", "2025-02-01");
+        expect(result.acas_extended_deadline).toBe("2025-03-17");
+    });
+
+    it("handles Day A == Day B (same day conciliation)", () => {
+        // Act: 1 Jan 2025. Base deadline: 31 Mar 2025 (Monday)
+        // Day A: 10 Feb 2025
+        // Day B: 10 Feb 2025
+        // remainderDays = 31 Mar - 10 Feb = 49 days
+        // Extended deadline = 10 Feb + 49 days = 31 Mar 2025
+        // One month from Day B = 10 Mar 2025
+        // Claimant gets 31 Mar (the longer)
+        const result = calculateDeadline("2025-01-01", "2025-02-10", "2025-02-10");
+        expect(result.acas_extended_deadline).toBe("2025-03-31");
+    });
 });
 
 // ---------------------------------------------------------------------------
