@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type { AnalyseRequest, Authority } from "@/schemas/types";
 import { getSchema } from "@/schemas";
 import { ERA_2025 } from "@/lib/constants";
-import { validateAllCitations } from "@/services/citation-validator";
+import { validateAllCitationsAuthoritative } from "@/services/citation-validator";
 import { ANALYSE_PROMPT_v2, PROMPT_VERSIONS } from "@/agents/prompts";
 import { callClaude, isClientAvailable } from "@/lib/claude-client";
 
@@ -140,20 +140,25 @@ export async function POST(request: NextRequest) {
         try {
             const parsed = JSON.parse(result.content);
 
-            // Phase 2a Epistemic Quarantine: Verify citations against known-good database
+            // Epistemic Quarantine: verify citations against the curated known-good
+            // database AND double-check them live against The National Archives Find
+            // Case Law (find-case-law.ts). Never throws — degrades to the curated
+            // verdict if the live source is unreachable.
             if (parsed.authorities && Array.isArray(parsed.authorities)) {
-                const validation = validateAllCitations(parsed.authorities);
+                const validation = await validateAllCitationsAuthoritative(parsed.authorities);
 
-                // Update each authority with its verified trust level
+                // Override Claude's self-reported trust with our verification.
                 parsed.authorities = parsed.authorities.map((auth: Authority, index: number) => {
-                    const validationResult = validation.results[index];
+                    const vr = validation.results[index];
                     return {
                         ...auth,
-                        // Override Claude's reported trust with our verification
-                        verified: validationResult.trustLevel === "VERIFIED",
-                        trust_level: validationResult.trustLevel,
-                        validation_reason: validationResult.reason,
-                        matched_case: validationResult.matchedAuthority?.shortName
+                        verified: vr.trustLevel === "VERIFIED",
+                        trust_level: vr.trustLevel,
+                        validation_reason: vr.reason,
+                        matched_case: vr.matchedName,
+                        matched_citation: vr.matchedCitation,
+                        source_url: vr.url,
+                        verification_source: vr.source,
                     };
                 });
 

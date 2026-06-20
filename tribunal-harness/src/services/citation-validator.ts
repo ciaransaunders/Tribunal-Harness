@@ -17,6 +17,7 @@ import {
     findAuthorityByPartialMatch,
     type VerifiedAuthority,
 } from "@/lib/verified-authorities";
+import { verifyCitation } from "@/services/find-case-law";
 
 export type TrustLevel = "VERIFIED" | "CHECK" | "QUARANTINED";
 
@@ -152,6 +153,154 @@ export function validateAllCitations(
             quarantined,
             verifiedPercentage:
                 total > 0 ? Math.round((verified / total) * 100) : 0,
+        },
+    };
+}
+
+// ---------------------------------------------------------------------------
+// Authoritative validation — Phase 2a (curated list) layered with a live
+// double-check against The National Archives Find Case Law (see find-case-law.ts).
+//
+// Strategy (conservative, legal-safety first):
+//  1. Check the curated known-good list first (fast, offline). It is the only
+//     reliable source for pre-2003 landmark authorities that TNA does not index.
+//     A curated VERIFIED short-circuits — no network call.
+//  2. Otherwise double-check live against Find Case Law (the primary source).
+//     A live exact neutral-citation match upgrades the result to VERIFIED.
+//  3. If the upstream is unreachable, fall back to the curated result and say so
+//     — never silently treat an unverifiable claim as verified.
+// ---------------------------------------------------------------------------
+
+export type CitationSource =
+    | "verified_db"
+    | "find_case_law"
+    | "verified_db+find_case_law"
+    | "unavailable";
+
+export interface AuthoritativeValidation {
+    originalCitation: string;
+    trustLevel: TrustLevel;
+    reason: string;
+    source: CitationSource;
+    /** Matched case short name (curated) or judgment title (live), if any. */
+    matchedName?: string;
+    matchedCitation?: string;
+    /** Canonical Find Case Law judgment URL, when matched live. */
+    url?: string;
+}
+
+function higherTrust(a: TrustLevel, b: TrustLevel): TrustLevel {
+    const rank: Record<TrustLevel, number> = { QUARANTINED: 0, CHECK: 1, VERIFIED: 2 };
+    return rank[a] >= rank[b] ? a : b;
+}
+
+/**
+ * Validate one authority against the curated list AND, if needed, live Find
+ * Case Law. Never throws — on any failure it degrades to the curated verdict.
+ */
+export async function validateCitationAuthoritative(authority: {
+    citation: string;
+    name?: string;
+}): Promise<AuthoritativeValidation> {
+    const stat = validateCitation(authority.citation);
+
+    // Curated VERIFIED is authoritative on its own (covers old landmark cases).
+    if (stat.trustLevel === "VERIFIED") {
+        return {
+            originalCitation: authority.citation,
+            trustLevel: "VERIFIED",
+            reason: stat.reason,
+            source: "verified_db",
+            matchedName: stat.matchedAuthority?.shortName,
+            matchedCitation: stat.matchedAuthority?.neutralCitation,
+        };
+    }
+
+    let live;
+    try {
+        live = await verifyCitation({ citation: authority.citation, caseName: authority.name });
+    } catch {
+        live = undefined;
+    }
+
+    // Upstream unreachable → fall back to the curated verdict, flagged.
+    if (!live || live.source === "unavailable") {
+        return {
+            originalCitation: authority.citation,
+            trustLevel: stat.trustLevel,
+            reason: `${stat.reason} (Live Find Case Law check unavailable; based on curated database only.)`,
+            source: "unavailable",
+            matchedName: stat.matchedAuthority?.shortName,
+            matchedCitation: stat.matchedAuthority?.neutralCitation,
+        };
+    }
+
+    // Live exact match → VERIFIED.
+    if (live.trustLevel === "VERIFIED") {
+        return {
+            originalCitation: authority.citation,
+            trustLevel: "VERIFIED",
+            reason: live.reason,
+            source: "find_case_law",
+            matchedName: live.matchedTitle ?? stat.matchedAuthority?.shortName,
+            matchedCitation: live.matchedCitation,
+            url: live.url,
+        };
+    }
+
+    // Combine the two non-verified signals, taking the higher trust.
+    const trustLevel = higherTrust(stat.trustLevel, live.trustLevel);
+    const reason =
+        live.trustLevel === "CHECK"
+            ? live.reason
+            : stat.trustLevel === "CHECK"
+                ? stat.reason
+                : live.reason;
+    return {
+        originalCitation: authority.citation,
+        trustLevel,
+        reason,
+        source: "verified_db+find_case_law",
+        matchedName: live.matchedTitle ?? stat.matchedAuthority?.shortName,
+        matchedCitation: live.matchedCitation ?? stat.matchedAuthority?.neutralCitation,
+        url: live.url,
+    };
+}
+
+/**
+ * Authoritative validation for an array of authorities (curated + live).
+ * Runs the per-authority checks concurrently. Never throws.
+ */
+export async function validateAllCitationsAuthoritative(
+    authorities: Array<{ citation: string; name?: string;[key: string]: unknown }>
+): Promise<{
+    results: AuthoritativeValidation[];
+    summary: {
+        total: number;
+        verified: number;
+        check: number;
+        quarantined: number;
+        verifiedPercentage: number;
+        liveChecks: number;
+    };
+}> {
+    const results = await Promise.all(
+        authorities.map((a) => validateCitationAuthoritative({ citation: a.citation, name: a.name }))
+    );
+    const verified = results.filter((r) => r.trustLevel === "VERIFIED").length;
+    const check = results.filter((r) => r.trustLevel === "CHECK").length;
+    const quarantined = results.filter((r) => r.trustLevel === "QUARANTINED").length;
+    const liveChecks = results.filter((r) => r.source !== "verified_db").length;
+    const total = results.length;
+    return {
+        results,
+        summary: {
+            total,
+            verified,
+            check,
+            quarantined,
+            verifiedPercentage: total > 0 ? Math.round((verified / total) * 100) : 0,
+            liveChecks,
         },
     };
 }
