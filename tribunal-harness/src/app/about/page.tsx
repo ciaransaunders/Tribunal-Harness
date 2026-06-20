@@ -4,7 +4,7 @@ export const metadata: Metadata = { title: "About | Tribunal Harness", descripti
 
 export default function AboutPage() {
     return (
-        <div className="page-section" style={{ paddingTop: "10rem", maxWidth: "800px" }}>
+        <div className="theme-light page-section" style={{ paddingTop: "10rem", maxWidth: "800px" }}>
             <span className="text-subhead">MISSION</span>
             <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "3rem", marginBottom: "1.5rem" }}>Closing the information gap.</h1>
             <div style={{ color: "var(--color-text-secondary)", lineHeight: 1.9, fontSize: "1.05rem" }}>

@@ -16,7 +16,7 @@ const STEPS = [
 
 export default function HowItWorksPage() {
     return (
-        <div style={{ paddingTop: "10rem" }}>
+        <div className="theme-light" style={{ paddingTop: "10rem" }}>
             <div className="page-section">
                 <span className="text-subhead">PROCESS</span>
                 <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "3rem", marginBottom: "1.5rem" }}>Four steps to structured analysis.</h1>

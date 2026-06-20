@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function DocumentationPage() {
     return (
-        <div style={{ paddingTop: "10rem" }}>
+        <div className="theme-light" style={{ paddingTop: "10rem" }}>
             <div className="page-section">
                 <span className="text-subhead">REFERENCE</span>
                 <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "3rem", marginBottom: "1.5rem" }}>Documentation</h1>

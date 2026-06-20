@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "Pricing | Tribunal Harness", descrip
 
 export default function PricingPage() {
     return (
-        <div style={{ paddingTop: "10rem" }}>
+        <div className="theme-light" style={{ paddingTop: "10rem" }}>
             <div className="page-section" style={{ textAlign: "center", maxWidth: "900px", margin: "0 auto" }}>
                 <span className="text-subhead">PRICING</span>
                 <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "3rem", marginBottom: "1.5rem" }}>Transparent. Fair. Accessible.</h1>

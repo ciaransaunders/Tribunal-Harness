@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Insights | Tribunal Harness", descri
 // the generic "Blog" label which reads as unfinished.
 export default function BlogPage() {
     return (
-        <div className="page-section" style={{ paddingTop: "10rem", maxWidth: "800px" }}>
+        <div className="theme-light page-section" style={{ paddingTop: "10rem", maxWidth: "800px" }}>
             <span className="text-subhead">INSIGHTS</span>
             <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "3rem", marginBottom: "1.5rem" }}>Insights</h1>
             <p className="text-lead" style={{ marginBottom: "3rem" }}>

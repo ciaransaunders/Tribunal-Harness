@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "Contact | Tribunal Harness", descrip
 
 export default function ContactPage() {
     return (
-        <div className="page-section" style={{ paddingTop: "10rem", maxWidth: "700px" }}>
+        <div className="theme-light page-section" style={{ paddingTop: "10rem", maxWidth: "700px" }}>
             <span className="text-subhead">REACH OUT</span>
             <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "3rem", marginBottom: "1.5rem" }}>Contact</h1>
             <p className="text-lead" style={{ marginBottom: "3rem" }}>
