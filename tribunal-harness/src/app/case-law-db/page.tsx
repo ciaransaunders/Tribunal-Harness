@@ -231,7 +231,7 @@ export default function CaseLawDBPage() {
 
                 <div style={{ marginTop: "3rem", padding: "1rem", borderTop: "1px solid var(--color-border-subtle)", textAlign: "center" }}>
                     <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--color-text-secondary)", opacity: 0.6 }}>
-                        Case law database is for research purposes only. Case status and binding perception can change. Seek professional advice for litigation.
+                        This tool provides legal information, not legal advice. It does not create a solicitor-client relationship. The case law database is for research purposes only — case status and binding authority can change. Seek professional advice for litigation.
                     </p>
                 </div>
             </div>

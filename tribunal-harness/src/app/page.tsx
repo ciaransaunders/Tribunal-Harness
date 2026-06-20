@@ -158,6 +158,11 @@ export default function HomePage() {
                     </div>
                 </motion.section>
             )}
+
+            {/* P1-C: persistent LSA 2007 disclaimer on the analysis workspace (shown in every stage) */}
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--color-text-secondary)", textAlign: "center", opacity: 0.6, padding: "2rem 1rem", maxWidth: "800px", margin: "0 auto" }}>
+                This tool provides legal information, not legal advice. It does not create a solicitor-client relationship.
+            </p>
         </div>
     );
 }

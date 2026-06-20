@@ -74,6 +74,11 @@ export default function SchemaBuilderPage() {
                         schemas for exploratory purposes only.
                     </p>
                 </div>
+
+                {/* P1-C: LSA 2007 legal-information disclaimer */}
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--color-text-secondary)", marginTop: "3rem", textAlign: "center", opacity: 0.6 }}>
+                    This tool provides legal information, not legal advice. It does not create a solicitor-client relationship.
+                </p>
             </div>
         </div>
     );

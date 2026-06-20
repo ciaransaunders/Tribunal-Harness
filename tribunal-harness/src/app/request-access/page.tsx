@@ -78,6 +78,11 @@ export default function RequestAccessPage() {
                 {error && <p style={{ color: "var(--color-error-coral)", fontSize: "0.85rem", marginBottom: "1rem" }}>{error}</p>}
                 <button type="submit" className="btn-primary">Submit Request</button>
             </form>
+
+            {/* P1-C: LSA 2007 legal-information disclaimer */}
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--color-text-secondary)", marginTop: "2rem", textAlign: "center", opacity: 0.6 }}>
+                This tool provides legal information, not legal advice. It does not create a solicitor-client relationship.
+            </p>
         </div>
     );
 }

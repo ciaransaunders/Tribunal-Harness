@@ -134,6 +134,11 @@ export default function PrivacyPolicyPage() {
                         <Link href="https://ico.org.uk/make-a-complaint/" style={{ color: "var(--color-accent-purple)" }}>ico.org.uk/make-a-complaint</Link>
                     </p>
                 </section>
+
+                {/* P1-C: LSA 2007 legal-information disclaimer */}
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--color-text-secondary)", marginTop: "3rem", textAlign: "center", opacity: 0.6 }}>
+                    This tool provides legal information, not legal advice. It does not create a solicitor-client relationship.
+                </p>
             </div>
         </div>
     );
