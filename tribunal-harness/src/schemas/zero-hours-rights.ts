@@ -8,7 +8,7 @@ export const zeroHoursRightsSchema: ClaimSchema = {
     description: "New rights for zero-hours and low-hours workers to guaranteed hours, shift notice, and cancellation payment.",
     legalTest: [
         "Is the worker on a zero-hours or low-hours contract?",
-        "Has the reference period of 12 weeks been met?",
+        "Has the relevant reference period been met? (Its exact length is to be confirmed by Statutory Instrument.)",
         "Was the worker denied guaranteed hours reflecting regular hours worked?",
         "Was reasonable notice of shifts provided?",
         "Was compensation paid for short-notice cancellation?",
@@ -35,7 +35,7 @@ export const zeroHoursRightsSchema: ClaimSchema = {
         },
         {
             id: "regular_hours", label: "Regular Hours Worked (per week)", type: "number", required: true,
-            helpText: "Average hours worked over a 12-week reference period.",
+            helpText: "Average hours worked over the relevant reference period (its length is to be confirmed by Statutory Instrument).",
         },
         { id: "guaranteed_hours_offered", label: "Were Guaranteed Hours Offered?", type: "boolean", required: true },
         { id: "shift_notice", label: "Was Reasonable Shift Notice Given?", type: "boolean", required: true },
