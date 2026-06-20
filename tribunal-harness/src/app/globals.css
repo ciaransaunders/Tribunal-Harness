@@ -614,8 +614,15 @@ h6 {
 
     /* D6.2 FIX: Mobile — single column for all grids */
     div[style*="grid-template-columns: 1fr 1fr 1fr 1fr"],
+    div[style*="grid-template-columns: repeat(4, 1fr)"],
     div[style*="grid-template-columns: repeat(3, 1fr)"],
-    div[style*="grid-template-columns: 1fr 1fr"] {
+    div[style*="grid-template-columns: 1fr 1fr"],
+    div[style*="grid-template-columns: 250px 1fr"],
+    div[style*="grid-template-columns: auto 1fr"],
+    div[style*="grid-template-columns: 1fr auto"],
+    div[style*="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr))"],
+    form[style*="grid-template-columns: 1fr auto auto"],
+    .footer-links {
         grid-template-columns: 1fr !important;
     }
 
