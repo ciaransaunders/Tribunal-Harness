@@ -1,6 +1,16 @@
 # CLAUDE.md — Tribunal Harness
 **Last updated: 18 February 2026**
 
+> **⚠ Current state (June 2026):** This master spec is largely historical and in
+> places out of date. The active app is `tribunal-harness/tribunal-harness/` —
+> read its `CLAUDE.md` first. Since this spec: all 10 claim schemas are
+> implemented; mobile nav, Trust dropdown and the light theme are done; ESLint is
+> configured and 193 Vitest tests pass; `/api/debate` is a working 3-agent engine.
+> **Case law is now looked up _live_ from TNA Find Case Law (no RAG corpus)** —
+> see `tribunal-harness/docs/live-case-law.md`. **Convert any source PDF to
+> Markdown before reasoning over it** (see "PDF → Markdown" in the inner CLAUDE.md).
+> The `_AGENT_BRIEFINGS/` docs (2 Mar 2026) are stale — trust the code.
+
 ---
 
 ## Project Identity

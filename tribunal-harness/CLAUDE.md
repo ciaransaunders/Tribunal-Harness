@@ -9,6 +9,8 @@
 **Author:** Qualified lawyer (LLM with Distinction), active litigant-in-person.
 **Mission:** Close the information asymmetry between unrepresented claimants and respondents with solicitors.
 
+> **Build state (June 2026):** All 10 claim schemas are implemented (one file each). `/api/debate` is a working 3-agent engine. ESLint is configured; 193 Vitest tests pass. Case law is looked up **live** from TNA Find Case Law — no RAG corpus (see `docs/live-case-law.md`). Status reports: `IMPROVEMENT-LOG.md`, `TESTING_READINESS.md`. ⚠ The `../_AGENT_BRIEFINGS/` docs (2 Mar 2026) are **stale** — trust the code over them.
+
 ---
 
 ## Architecture
@@ -62,15 +64,19 @@ tribunal-harness/
 │   │   ├── NavBar.tsx               # Sticky nav (hamburger mobile + Trust dropdown)
 │   │   └── Footer.tsx               # Cream-themed footer with legal disclaimer
 │   │
-│   ├── schemas/                     # Claim type schemas (6 implemented, 10 declared)
+│   ├── schemas/                     # Claim type schemas (all 10 implemented, one file each)
 │   │   ├── index.ts                 # Schema registry — getSchema(claimType)
-│   │   ├── types.ts                 # TypeScript interfaces for all schemas
+│   │   ├── types.ts                 # TS interfaces (incl. ValidatedAuthority)
 │   │   ├── unfair-dismissal.ts
 │   │   ├── direct-discrimination.ts
+│   │   ├── indirect-discrimination.ts
+│   │   ├── victimisation.ts
 │   │   ├── harassment.ts
 │   │   ├── reasonable-adjustments.ts
+│   │   ├── wrongful-dismissal.ts
 │   │   ├── whistleblowing.ts
-│   │   └── fire-and-rehire.ts
+│   │   ├── fire-and-rehire.ts
+│   │   └── zero-hours-rights.ts
 │   │
 │   ├── services/
 │   │   ├── deadline-calculator.ts      # ERA 2025 dual-regime deadline logic
@@ -250,14 +256,34 @@ The navigation bar and interactive menu elements use the **Liquid Glass** materi
 
 ---
 
+## Case Law — Live Lookup (no RAG base)
+
+Case law is retrieved and verified **live** from **TNA Find Case Law**
+(`caselaw.nationalarchives.gov.uk`, free, no key, ~1,000 req/5 min), not from a
+pre-built vector/RAG corpus. Full detail in `docs/live-case-law.md`.
+
+- `src/services/find-case-law.ts` — `searchCaseLaw()`, `verifyCitation()`, `getJudgmentMarkdown()`; structured `{status}` envelope; graceful degradation (never throws).
+- `GET /api/case-law/find?q=…&court=eat` — live search. (`/api/case-law/search` is the older curated seed data.)
+- `/api/analyse` double-checks every AI-cited authority live; VERIFIED only on an **exact neutral-citation match**; falls back to the curated `verified-authorities.ts` list (the only reliable source for pre-2003 landmarks) and **never falsely verifies** if upstream is down.
+- **Verify citations, never guess them.** Citation numbers are easy to get wrong — this repo's own seed list had several (see `corpus/authorities/MANIFEST.md`).
+- Coverage is ~2003 onward; older landmark authorities live in `verified-authorities.ts`.
+
+## PDF → Markdown Before Reasoning
+
+**Always convert a PDF to Markdown / clean text before an LLM reasons over it** —
+models reason far better over Markdown than raw PDF bytes.
+
+- **In the product:** `src/services/pdf-to-markdown.ts` (`pdfBufferToMarkdown`, `fetchPdfAsMarkdown` — allowlisted legal domains only, SSRF-safe) converts fetched judgment/source PDFs via `pdf-parse`. `find-case-law.ts:getJudgmentMarkdown(slug)` returns a found judgment as Markdown. Prefer TNA `data.xml` / clean text where available; fall back to PDF.
+- **In agent / dev sessions:** use the local `pdf-to-markdown` pipeline (binary at `~/.local/bin/pdf-to-markdown`; 3-branch fallback handles scanned and null-byte/SIGSEGV PDFs via `pypdf` + `cupsfilter`). Convert first, then reason.
+
 ## Known Stubs & Technical Debt
 
-- `/api/debate` — returns 202 `coming_soon`. Phase 3.
+- `/api/debate` — **implemented**: 3-agent Drafter→Critic→Judge (single pass). Needs `ANTHROPIC_API_KEY`; no degraded mode.
 - `/api/webhook` — requires `WEBHOOK_SECRET` env var. Phase 4.
 - `/api/roadmap/[caseId]` — returns static roadmap template. Phase 4 (Temporal.io).
-- Case Law DB search — seed data only (20 cases hardcoded). Phase 2 target: vector DB (Pinecone/pgvector).
-- 4 claim type schemas are declared in `CLAIM_TYPES` but not yet implemented: `indirect_discrimination`, `victimisation`, `wrongful_dismissal`, `zero_hours_rights`.
-- `pdf-parse` and `mammoth` are runtime dependencies for `/api/triage` — only used server-side.
+- Case Law DB — `/api/case-law/search` is curated seed data; `/api/case-law/find` is live (see Case Law above). A heavy vector DB / RAG corpus is intentionally avoided.
+- All 10 claim schemas are implemented (one file per claim type in `src/schemas/`).
+- `pdf-parse` and `mammoth` are runtime deps for `/api/triage` and the PDF→Markdown pipeline — server-side only.
 
 ---
 
