@@ -46,5 +46,3 @@ export const zeroHoursRightsSchema: ClaimSchema = {
         { id: "narrative", label: "Full Account", type: "textarea", required: false },
     ],
 };
-
-export default zeroHoursRightsSchema;

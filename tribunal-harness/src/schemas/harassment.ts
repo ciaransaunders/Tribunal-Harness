@@ -79,5 +79,3 @@ export const harassmentSchema: ClaimSchema = {
         { id: "narrative", label: "Full Account", type: "textarea", required: false },
     ],
 };
-
-export default harassmentSchema;

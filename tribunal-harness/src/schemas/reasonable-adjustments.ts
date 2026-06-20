@@ -42,5 +42,3 @@ export const reasonableAdjustmentsSchema: ClaimSchema = {
         { id: "narrative", label: "Full Account", type: "textarea", required: false },
     ],
 };
-
-export default reasonableAdjustmentsSchema;

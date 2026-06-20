@@ -157,5 +157,3 @@ export const unfairDismissalSchema: ClaimSchema = {
         },
     ],
 };
-
-export default unfairDismissalSchema;

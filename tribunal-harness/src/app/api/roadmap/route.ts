@@ -14,7 +14,6 @@ export async function POST(request: NextRequest) {
         // Calculate actual deadline safely
         const deadlineRes = calculateDeadline(dateOfLastAct, undefined, undefined, claimType || "unfair_dismissal");
         const acasDeadline = new Date(deadlineRes.original_deadline);
-        const et1DeadlineStr = deadlineRes.acas_extended_deadline || deadlineRes.original_deadline;
 
         // Add roughly 30 days for ET1 if no ACAS dates provided (simulating standard Early Conciliation pause for roadmap)
         const et1Deadline = new Date(acasDeadline);

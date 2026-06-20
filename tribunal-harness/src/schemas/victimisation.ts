@@ -30,5 +30,3 @@ export const victimisationSchema: ClaimSchema = {
         { id: "narrative", label: "Full Account", type: "textarea", required: false },
     ],
 };
-
-export default victimisationSchema;
