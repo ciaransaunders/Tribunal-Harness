@@ -66,6 +66,7 @@ export default function NavBar() {
                             className="text-sm font-medium transition-colors text-gray-300 hover:text-purple-400 glass-text"
                             style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}
                             aria-haspopup="true"
+                            aria-controls="trust-dropdown"
                             aria-expanded={trustOpen}
                             onClick={() => setTrustOpen((open) => !open)}
                         >
@@ -76,7 +77,7 @@ export default function NavBar() {
                         </button>
 
                         {/* Dropdown - Liquid Glass expandable panel style */}
-                        <div style={{
+                        <div id="trust-dropdown" style={{
                             position: "absolute", top: "calc(100% + 12px)", left: "50%", transform: "translateX(-50%)",
                             minWidth: "160px", zIndex: 100,
                             opacity: trustOpen ? 1 : 0,
@@ -121,6 +122,8 @@ export default function NavBar() {
                         className="md:hidden glass-button glass-thin"
                         onClick={() => setMobileOpen(!mobileOpen)}
                         aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                        aria-controls="mobile-menu"
+                        aria-expanded={mobileOpen}
                         style={{ padding: "6px 8px", color: "white", background: "rgba(255,255,255,0.05)" }}
                     >
                         {mobileOpen ? (
@@ -140,7 +143,7 @@ export default function NavBar() {
             </div>
 
             {/* Mobile menu overlay - expanding glass panel */}
-            <div style={{
+            <div id="mobile-menu" style={{
                 position: "absolute", top: "calc(100% + 12px)", left: "0", right: "0",
                 display: mobileOpen ? "flex" : "none", flexDirection: "column",
                 padding: "2rem 1.5rem", gap: "0",

@@ -47,16 +47,16 @@ export default function RequestAccessPage() {
 
             <form onSubmit={handleSubmit} className="interface-card">
                 <div className="input-group">
-                    <label className="input-label">Name</label>
-                    <input className="input-field" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                    <label htmlFor="form-name" className="input-label">Name</label>
+                    <input id="form-name" className="input-field" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
                 </div>
                 <div className="input-group">
-                    <label className="input-label">Email</label>
-                    <input className="input-field" type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                    <label htmlFor="form-email" className="input-label">Email</label>
+                    <input id="form-email" className="input-field" type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                 </div>
                 <div className="input-group">
-                    <label className="input-label">I am a...</label>
-                    <select className="input-field" value={form.user_type} onChange={(e) => setForm({ ...form, user_type: e.target.value })}>
+                    <label htmlFor="form-user-type" className="input-label">I am a...</label>
+                    <select id="form-user-type" className="input-field" value={form.user_type} onChange={(e) => setForm({ ...form, user_type: e.target.value })}>
                         <option value="lip">Litigant-in-Person</option>
                         <option value="solicitor">Solicitor</option>
                         <option value="legal_aid">Legal Aid Provider</option>
@@ -65,8 +65,8 @@ export default function RequestAccessPage() {
                     </select>
                 </div>
                 <div className="input-group">
-                    <label className="input-label">Tell us about your situation (optional)</label>
-                    <textarea className="input-field" rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} style={{ resize: "vertical" }} />
+                    <label htmlFor="form-description" className="input-label">Tell us about your situation (optional)</label>
+                    <textarea id="form-description" className="input-field" rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} style={{ resize: "vertical" }} />
                 </div>
                 <div className="input-group" style={{ display: "flex", gap: "0.75rem", alignItems: "start", marginTop: "1.5rem" }}>
                     <input type="checkbox" required id="privacy_consent" style={{ marginTop: "0.25rem" }} />
