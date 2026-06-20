@@ -2,11 +2,15 @@
 
 import type { ClaimSchema } from "./types";
 import { unfairDismissalSchema } from "./unfair-dismissal";
-import { directDiscriminationSchema, indirectDiscriminationSchema, victimisationSchema } from "./direct-discrimination";
+import { directDiscriminationSchema } from "./direct-discrimination";
+import { indirectDiscriminationSchema } from "./indirect-discrimination";
+import { victimisationSchema } from "./victimisation";
 import { harassmentSchema } from "./harassment";
-import { reasonableAdjustmentsSchema, wrongfulDismissalSchema } from "./reasonable-adjustments";
+import { reasonableAdjustmentsSchema } from "./reasonable-adjustments";
+import { wrongfulDismissalSchema } from "./wrongful-dismissal";
 import { whistleblowingSchema } from "./whistleblowing";
-import { fireAndRehireSchema, zeroHoursRightsSchema } from "./fire-and-rehire";
+import { fireAndRehireSchema } from "./fire-and-rehire";
+import { zeroHoursRightsSchema } from "./zero-hours-rights";
 
 export const SCHEMAS: Record<string, ClaimSchema> = {
     unfair_dismissal: unfairDismissalSchema,

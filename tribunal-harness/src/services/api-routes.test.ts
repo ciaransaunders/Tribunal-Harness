@@ -155,6 +155,53 @@ describe("GET /api/schema/[claimType]", () => {
         const json = await res.json();
         expect(json.id).toBe("zero_hours_rights");
     });
+
+    it("returns schema for indirect_discrimination (EA 2010 s19)", async () => {
+        const req = makeGetRequest("http://localhost:3000/api/schema/indirect_discrimination");
+        const res = await GET(req, { params: Promise.resolve({ claimType: "indirect_discrimination" }) });
+        expect(res.status).toBe(200);
+        const json = await res.json();
+        expect(json.id).toBe("indirect_discrimination");
+        expect(json.statute).toBe("EA 2010 s19");
+        expect(Array.isArray(json.legalTest)).toBe(true);
+        expect(json.legalTest.length).toBeGreaterThan(0);
+        expect(json.keyAuthorities.length).toBeGreaterThan(0);
+    });
+
+    it("returns schema for victimisation (EA 2010 s27)", async () => {
+        const req = makeGetRequest("http://localhost:3000/api/schema/victimisation");
+        const res = await GET(req, { params: Promise.resolve({ claimType: "victimisation" }) });
+        expect(res.status).toBe(200);
+        const json = await res.json();
+        expect(json.id).toBe("victimisation");
+        expect(json.statute).toBe("EA 2010 s27");
+        expect(Array.isArray(json.legalTest)).toBe(true);
+        expect(json.legalTest.length).toBeGreaterThan(0);
+        expect(json.keyAuthorities.length).toBeGreaterThan(0);
+    });
+
+    it("returns schema for wrongful_dismissal (Common Law)", async () => {
+        const req = makeGetRequest("http://localhost:3000/api/schema/wrongful_dismissal");
+        const res = await GET(req, { params: Promise.resolve({ claimType: "wrongful_dismissal" }) });
+        expect(res.status).toBe(200);
+        const json = await res.json();
+        expect(json.id).toBe("wrongful_dismissal");
+        expect(json.statute).toBe("Common Law");
+        expect(Array.isArray(json.legalTest)).toBe(true);
+        expect(json.legalTest.length).toBeGreaterThan(0);
+        expect(json.keyAuthorities.length).toBeGreaterThan(0);
+    });
+
+    it("returns a schema for every declared CLAIM_TYPE (registry completeness)", async () => {
+        const { CLAIM_TYPES } = await import("../lib/constants");
+        for (const ct of CLAIM_TYPES) {
+            const req = makeGetRequest(`http://localhost:3000/api/schema/${ct.id}`);
+            const res = await GET(req, { params: Promise.resolve({ claimType: ct.id }) });
+            expect(res.status, `schema route should resolve ${ct.id}`).toBe(200);
+            const json = await res.json();
+            expect(json.id, `schema id should match for ${ct.id}`).toBe(ct.id);
+        }
+    });
 });
 
 // ---------------------------------------------------------------------------
