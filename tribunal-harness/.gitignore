@@ -56,3 +56,7 @@ coverage/
 
 # Build dist output
 dist/
+
+# Smoke harness artefacts (regenerated on each run)
+smoke-report.json
+smoke-report.md

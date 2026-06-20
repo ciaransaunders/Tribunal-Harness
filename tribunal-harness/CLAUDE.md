@@ -116,6 +116,10 @@ The project uses **one LLM provider**:
 
 Both routes **degrade gracefully** without `ANTHROPIC_API_KEY` — they return schema data and extracted text without AI analysis.
 
+**Offline agent stand-in.** Set `LLM_PROVIDER=agent` to route every `callClaude()` to `src/lib/llm/agent-provider.ts` (deterministic, schema-conformant JSON, debug.model=`agent-stand-in`). Used by `npm run smoke`; lets the full pipeline (including `/api/debate`) run with no API key. Hermeticity invariant: the stand-in must only emit citations whose leading short-name lives in `src/lib/verified-authorities.ts` (Polkey, BHS v Burchell, Iceland Frozen Foods, etc.) — otherwise `citation-validator` falls through to a live Find Case Law fetch.
+
+**Legal-writing refinement.** Every LLM response from /api/analyse, /api/triage, /api/debate is post-processed by `refineForUser()` in `src/services/legal-writing-refinement.ts`, which calls Claude with `LEGAL_WRITING_REFINEMENT_PROMPT_v1` — a combined editor prompt distilled from the /legal-writing-quality and /persuasive-legal-writing skills. The refinement preserves the JSON schema and only polishes the prose values (claim reasoning, judge synthesis, procedural notes, etc.). It runs even in the offline agent stand-in (pass-through synth, recorded as `refinement.source: 'agent-stand-in'` in the response). Disable with `REFINEMENT_DISABLED=1`.
+
 **No other LLM providers are used.** There are no OpenAI, Google, Mistral, or other API calls.
 
 ---
@@ -175,6 +179,10 @@ npm test             # Vitest — deadline-calculator + API route tests
 
 # Lint
 npm run lint         # Next.js ESLint
+
+# End-to-end smoke run — invokes every API route in-process via the agent stand-in,
+# writes smoke-report.{json,md} (gitignored). Exits 0 iff every section is well-formed.
+npm run smoke        # = LLM_PROVIDER=agent tsx scripts/smoke-run.ts
 ```
 
 ### Required Environment Variables
@@ -186,6 +194,8 @@ RESEND_API_KEY=re_...                  # Optional: email notifications for acces
 NOTIFY_EMAIL=hello@tribunalharness.co.uk  # Optional: where to send access request notifications
 WEBHOOK_SECRET=...                     # Required for /api/webhook to accept requests
 ERA_2025_TIME_LIMIT_COMMENCEMENT=...   # Optional: override Oct 2026 date when SI confirmed
+LLM_PROVIDER=agent                     # Optional: route all LLM calls to the offline agent stand-in (no API key needed)
+REFINEMENT_DISABLED=1                   # Optional: bypass the legal-writing refinement layer
 ```
 
 ---
@@ -284,6 +294,7 @@ models reason far better over Markdown than raw PDF bytes.
 - Case Law DB — `/api/case-law/search` is curated seed data; `/api/case-law/find` is live (see Case Law above). A heavy vector DB / RAG corpus is intentionally avoided.
 - All 10 claim schemas are implemented (one file per claim type in `src/schemas/`).
 - `pdf-parse` and `mammoth` are runtime deps for `/api/triage` and the PDF→Markdown pipeline — server-side only.
+- **Response-shape drifts** (smoke harness already normalises both): `/api/deadlines` returns `time_limit_regime: "pre_era_2025" | "post_era_2025"` and `original_deadline` (not `regime` / `deadline_date`); `/api/era-2025/tracker` returns `{ changes: [...] }` (not `{ tracker: [...] }`). Reconcile when the UI is wired through.
 
 ---
 

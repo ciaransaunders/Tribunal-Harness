@@ -6,6 +6,7 @@ import {
     PROMPT_VERSIONS,
 } from "@/agents/prompts";
 import { callClaude, isClientAvailable } from "@/lib/claude-client";
+import { refineForUser } from "@/services/legal-writing-refinement";
 
 export const maxDuration = 60; // Allow up to 60 seconds on Vercel for the sequential calls
 
@@ -123,7 +124,7 @@ export async function POST(request: NextRequest) {
             criticResult.usage.output_tokens +
             judgeResult.usage.output_tokens;
 
-        return NextResponse.json({
+        const responseBody = {
             drafter: drafterOutput,
             critic: criticOutput,
             judge: judgeOutput,
@@ -138,7 +139,14 @@ export async function POST(request: NextRequest) {
                     judge: judgeResult.debug,
                 },
             },
-        });
+        };
+
+        const { payload: refined, refinement } = await refineForUser(
+            "debate",
+            responseBody
+        );
+        (refined as Record<string, unknown>).refinement = refinement;
+        return NextResponse.json(refined);
 
     } catch (error) {
         const duration = Date.now() - startTime;

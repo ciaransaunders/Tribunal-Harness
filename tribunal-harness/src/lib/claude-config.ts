@@ -134,6 +134,19 @@ export const ENDPOINT_CONFIG: Record<string, EndpointConfig> = {
     temperature: 0.1,
     label: "Judge (Opus)",
   },
+
+  // ── Legal-writing refinement (post-processing prose pass) ──────
+  // Editor-only pass over allowlisted prose fields after the substantive
+  // LLM call has returned. Never edits citations, dates, statutes,
+  // strengths or enums — see LEGAL_WRITING_REFINEMENT_PROMPT_v1.
+  refine: {
+    model: CLAUDE_MODELS.SONNET,
+    effort: "low",
+    max_tokens: 4000,
+    thinking: { type: "disabled" },
+    temperature: 0.2,
+    label: "Legal-writing refinement (Sonnet)",
+  },
 };
 
 // ─── Cost Estimation ─────────────────────────────────────────────────

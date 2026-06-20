@@ -1,0 +1,5 @@
+# BAILII judgment PDFs — local corpus, re-fetchable via the bailii-case-download skill.
+# Kept out of git by default so the repo stays lean (the PDFs total a few MB and
+# are reproducible from MANIFEST.md). Delete the "*.pdf" line below to commit them.
+*.pdf
+_download_log.txt

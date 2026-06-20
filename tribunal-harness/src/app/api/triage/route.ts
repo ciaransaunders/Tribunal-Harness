@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { TRIAGE_PROMPT_v2, PROMPT_VERSIONS } from "@/agents/prompts";
 import { callClaude, isClientAvailable } from "@/lib/claude-client";
+import { refineForUser } from "@/services/legal-writing-refinement";
 
 /**
  * POST /api/triage
@@ -76,6 +77,7 @@ export async function POST(request: NextRequest) {
                 ],
                 document_summary: `Extracted ${extractedText.length} characters from ${file.name}. AI triage requires an Anthropic API key.`,
                 extracted_text: extractedText.substring(0, 5000),
+                refinement: { applied: false, reason: "llm-unavailable" },
             });
         }
 
@@ -99,9 +101,14 @@ export async function POST(request: NextRequest) {
         try {
             const parsed = JSON.parse(result.content);
             parsed._debug = result.debug;
-            return NextResponse.json(parsed);
+            const { payload: refined, refinement } = await refineForUser(
+                "triage",
+                parsed
+            );
+            (refined as Record<string, unknown>).refinement = refinement;
+            return NextResponse.json(refined);
         } catch {
-            return NextResponse.json({
+            const fallback = {
                 updated_fields: {},
                 query_array: [],
                 document_summary: result.content,
@@ -110,7 +117,13 @@ export async function POST(request: NextRequest) {
                     ...result.debug,
                     error: "JSON mapping failed"
                 }
-            });
+            };
+            const { payload: refined, refinement } = await refineForUser(
+                "triage",
+                fallback
+            );
+            (refined as Record<string, unknown>).refinement = refinement;
+            return NextResponse.json(refined);
         }
     } catch (error) {
         return NextResponse.json(

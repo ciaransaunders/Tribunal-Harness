@@ -5,6 +5,7 @@ import { ERA_2025 } from "@/lib/constants";
 import { validateAllCitationsAuthoritative } from "@/services/citation-validator";
 import { ANALYSE_PROMPT_v2, PROMPT_VERSIONS } from "@/agents/prompts";
 import { callClaude, isClientAvailable } from "@/lib/claude-client";
+import { refineForUser } from "@/services/legal-writing-refinement";
 
 /**
  * POST /api/analyse
@@ -109,6 +110,7 @@ export async function POST(request: NextRequest) {
                         commencement_date: "See implementation tracker",
                         status: "upcoming" as const,
                     })),
+                    refinement: { applied: false, reason: "llm-unavailable" },
                 },
                 { status: 200 } // Return 200 with degraded response, not 500
             );
@@ -169,12 +171,19 @@ export async function POST(request: NextRequest) {
             // Attach debug metadata
             parsed._debug = result.debug;
 
-            return NextResponse.json(parsed);
+            // Refinement pass — style polish over allowlisted prose fields.
+            // Never throws; returns refinement metadata for the response.
+            const { payload: refined, refinement } = await refineForUser(
+                "analyse",
+                parsed
+            );
+            (refined as Record<string, unknown>).refinement = refinement;
+            return NextResponse.json(refined);
         } catch {
             const duration = Date.now() - startTime;
             console.warn(`[API /api/analyse] Failed to parse JSON, returning raw text. Duration: ${duration}ms`);
             // If Claude didn't return valid JSON, wrap in structured response
-            return NextResponse.json({
+            const fallback = {
                 claims: [],
                 authorities: [],
                 statutory_provisions: [],
@@ -185,7 +194,13 @@ export async function POST(request: NextRequest) {
                     ...result.debug,
                     error: "JSON mapping failed"
                 }
-            });
+            };
+            const { payload: refined, refinement } = await refineForUser(
+                "analyse",
+                fallback
+            );
+            (refined as Record<string, unknown>).refinement = refinement;
+            return NextResponse.json(refined);
         }
     } catch (error) {
         const duration = Date.now() - startTime;

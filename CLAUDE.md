@@ -9,6 +9,7 @@
 > **Case law is now looked up _live_ from TNA Find Case Law (no RAG corpus)** —
 > see `tribunal-harness/docs/live-case-law.md`. **Convert any source PDF to
 > Markdown before reasoning over it** (see "PDF → Markdown" in the inner CLAUDE.md).
+> **`LLM_PROVIDER=agent` + `npm run smoke`** in the inner app runs a hermetic end-to-end smoke test with no API key (agent stand-in at `src/lib/llm/agent-provider.ts`).
 > The `_AGENT_BRIEFINGS/` docs (2 Mar 2026) are stale — trust the code.
 
 ---
