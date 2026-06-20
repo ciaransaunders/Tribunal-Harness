@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { AnalyseRequest } from "@/schemas/types";
+import type { AnalyseRequest, Authority } from "@/schemas/types";
 import { getSchema } from "@/schemas";
 import { ERA_2025 } from "@/lib/constants";
 import { validateAllCitations } from "@/services/citation-validator";
@@ -145,8 +145,7 @@ export async function POST(request: NextRequest) {
                 const validation = validateAllCitations(parsed.authorities);
 
                 // Update each authority with its verified trust level
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                parsed.authorities = parsed.authorities.map((auth: any, index: number) => {
+                parsed.authorities = parsed.authorities.map((auth: Authority, index: number) => {
                     const validationResult = validation.results[index];
                     return {
                         ...auth,

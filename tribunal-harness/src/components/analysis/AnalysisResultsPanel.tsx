@@ -83,7 +83,7 @@ export function AnalysisResultsPanel({ results, timelineStages }: AnalysisResult
                         <h3 className="text-subhead" style={{ margin: 0 }}>Legal Authorities & Epistemic Quarantine</h3>
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                        {results.authorities?.map((auth: any, i: number) => (
+                        {results.authorities?.map((auth, i) => (
                             <Card key={i} variant="wireframe" style={{
                                 borderLeftWidth: "3px",
                                 borderLeftColor: auth.trust_level === "VERIFIED" ? "#10b981" :

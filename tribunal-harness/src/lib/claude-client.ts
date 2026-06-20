@@ -94,8 +94,7 @@ export async function callClaude(
     const config = { ...getEndpointConfig(params.endpoint), ...params.configOverride };
 
     // Build the messages request
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const requestParams: any = {
+    const requestParams: Anthropic.MessageCreateParamsNonStreaming = {
         model: config.model,
         max_tokens: config.max_tokens,
         system: params.system,
