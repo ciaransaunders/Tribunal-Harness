@@ -1,5 +1,7 @@
 # Tribunal Harness
 
+[![CI](https://github.com/ciaransaunders/Tribunal-Harness/actions/workflows/ci.yml/badge.svg)](https://github.com/ciaransaunders/Tribunal-Harness/actions/workflows/ci.yml)
+
 A UK employment tribunal legal intelligence engine for litigants-in-person (LiPs). Tribunal Harness addresses the information asymmetry between unrepresented claimants and respondents with legal representation, providing schema-driven legal analysis across the full range of employment tribunal claim types.
 
 This is not a chatbot. The core architecture is built on four pillars: **Inverse Chatbot** (dynamic schema-driven UI instead of free chat), **Epistemic Quarantine** (every legal proposition carries a trust level; ungrounded claims are stripped), **Durable State Machine** (long-running case state), and **Adversarial Shadow-Opponent** (a Drafter/Critic/Judge debate that stress-tests arguments before the user sees them).
