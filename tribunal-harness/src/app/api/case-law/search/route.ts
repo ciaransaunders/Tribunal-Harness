@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ERA_2025, formatCommencementDate } from "@/lib/constants";
 
 // ISSUE-9 FIX: Case law search endpoint with seed data.
 // Phase 2: Replace SEED_CASES with a real vector DB query (Pinecone/pgvector).
@@ -159,7 +160,7 @@ const SEED_CASES: CaseLawEntry[] = [
         court: "Statute",
         year: 2025,
         tier: "statutory",
-        summary: "Reduces the qualifying period for unfair dismissal from 2 years to 6 months. Commencement: 1 January 2027 (subject to Statutory Instrument). Employees dismissed on or after this date with 6 months' service will have the right not to be unfairly dismissed.",
+        summary: `Reduces the qualifying period for unfair dismissal from 2 years to 6 months. Commencement: ${formatCommencementDate(ERA_2025.QUALIFYING_PERIOD_6_MONTHS)} (subject to Statutory Instrument). Employees dismissed on or after this date with 6 months' service will have the right not to be unfairly dismissed.`,
         claim_types: ["unfair_dismissal"],
         trust_badge: "VERIFIED",
     },
@@ -171,7 +172,7 @@ const SEED_CASES: CaseLawEntry[] = [
         court: "Statute",
         year: 2025,
         tier: "statutory",
-        summary: "Dismissal for the purpose of rehiring on inferior terms is automatically unfair. No qualifying period required. Commencement: 1 January 2027 (subject to Statutory Instrument). Applies where the employer's reason or principal reason for dismissal is to offer re-engagement on different terms.",
+        summary: `Dismissal for the purpose of rehiring on inferior terms is automatically unfair. No qualifying period required. Commencement: ${formatCommencementDate(ERA_2025.FIRE_AND_REHIRE_AUTO_UNFAIR)} (subject to Statutory Instrument). Applies where the employer's reason or principal reason for dismissal is to offer re-engagement on different terms.`,
         claim_types: ["fire_and_rehire", "unfair_dismissal"],
         trust_badge: "VERIFIED",
     },

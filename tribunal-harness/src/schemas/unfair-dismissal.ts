@@ -1,5 +1,5 @@
 import type { ClaimSchema } from "./types";
-import { ERA_2025 } from "@/lib/constants";
+import { ERA_2025, formatCommencementMonth, formatCommencementDate } from "@/lib/constants";
 
 export const unfairDismissalSchema: ClaimSchema = {
     id: "unfair_dismissal",
@@ -21,10 +21,10 @@ export const unfairDismissalSchema: ClaimSchema = {
         "Western Excavating v Sharp [1978] ICR 221",
     ],
     era2025Changes: [
-        "Qualifying period reduces from 2 years to 6 months (from January 2027)",
-        "Compensatory award cap removed entirely (from January 2027)",
-        "Fire and rehire dismissals automatically unfair (from January 2027)",
-        "Industrial action dismissals automatically unfair with no 12-week limit (from February 2026, in force)",
+        `Qualifying period reduces from 2 years to 6 months (from ${formatCommencementMonth(ERA_2025.QUALIFYING_PERIOD_6_MONTHS)})`,
+        `Compensatory award cap removed entirely (from ${formatCommencementMonth(ERA_2025.COMPENSATORY_AWARD_UNCAPPED)})`,
+        `Fire and rehire dismissals automatically unfair (from ${formatCommencementMonth(ERA_2025.FIRE_AND_REHIRE_AUTO_UNFAIR)})`,
+        `Industrial action dismissals automatically unfair with no 12-week limit (from ${formatCommencementMonth(ERA_2025.INDUSTRIAL_ACTION_DISMISSAL)}, in force)`,
     ],
     fields: [
         {
@@ -59,14 +59,13 @@ export const unfairDismissalSchema: ClaimSchema = {
             label: "Qualifying Service Met",
             type: "boolean",
             required: false,
-            helpText:
-                "Auto-calculated: Pre-Jan 2027 = 2 years; Post-Jan 2027 = 6 months.",
+            helpText: `Auto-calculated: Pre-${formatCommencementMonth(ERA_2025.QUALIFYING_PERIOD_6_MONTHS)} = 2 years; Post-${formatCommencementMonth(ERA_2025.QUALIFYING_PERIOD_6_MONTHS)} = 6 months.`,
             era2025: {
                 isNew: false,
                 changedFrom: "2 years continuous employment",
                 commencementDate: ERA_2025.QUALIFYING_PERIOD_6_MONTHS,
                 status: "upcoming",
-                note: "Reduces to 6 months from 1 January 2027.",
+                note: `Reduces to 6 months from ${formatCommencementDate(ERA_2025.QUALIFYING_PERIOD_6_MONTHS)}.`,
             },
         },
         {
@@ -107,11 +106,11 @@ export const unfairDismissalSchema: ClaimSchema = {
                 },
                 {
                     value: "fire_and_rehire",
-                    label: "Fire and rehire (ERA 2025 — from Jan 2027)",
+                    label: `Fire and rehire (ERA 2025 — from ${formatCommencementMonth(ERA_2025.FIRE_AND_REHIRE_AUTO_UNFAIR)})`,
                 },
                 {
                     value: "fire_and_replace",
-                    label: "Fire and replace (ERA 2025 — from Jan 2027)",
+                    label: `Fire and replace (ERA 2025 — from ${formatCommencementMonth(ERA_2025.FIRE_AND_REHIRE_AUTO_UNFAIR)})`,
                 },
             ],
             era2025: {
@@ -119,7 +118,7 @@ export const unfairDismissalSchema: ClaimSchema = {
                 changedFrom: "Industrial action had 12-week protected period",
                 commencementDate: ERA_2025.INDUSTRIAL_ACTION_DISMISSAL,
                 status: "in_force",
-                note: "Industrial action dismissal now automatically unfair. Fire and rehire/replace added from Jan 2027.",
+                note: `Industrial action dismissal now automatically unfair. Fire and rehire/replace added from ${formatCommencementMonth(ERA_2025.FIRE_AND_REHIRE_AUTO_UNFAIR)}.`,
             },
         },
         {
@@ -146,7 +145,7 @@ export const unfairDismissalSchema: ClaimSchema = {
                     "Capped at lower of 1 year's pay or statutory maximum (£115,115)",
                 commencementDate: ERA_2025.COMPENSATORY_AWARD_UNCAPPED,
                 status: "upcoming",
-                note: "Cap removed entirely from 1 January 2027.",
+                note: `Cap removed entirely from ${formatCommencementDate(ERA_2025.COMPENSATORY_AWARD_UNCAPPED)}.`,
             },
         },
         {

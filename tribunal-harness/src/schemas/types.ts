@@ -41,7 +41,7 @@ export interface AnalyseRequest {
 
 export interface AnalyseResponse {
     claims: ClaimAnalysis[];
-    authorities: Authority[];
+    authorities: ValidatedAuthority[];
     statutory_provisions: StatutoryProvision[];
     procedural_notes: string[];
     era_2025_flags: ERA2025Flag[];
@@ -60,6 +60,24 @@ export interface Authority {
     relevance: string;
     tier: 1 | 2 | 3 | 4;
     trust: "verified" | "check" | "quarantined";
+}
+
+/**
+ * An Authority enriched by the citation validator (see
+ * src/services/citation-validator.ts). The /api/analyse route independently
+ * re-verifies every citation Claude returns and attaches these fields,
+ * overriding Claude's self-reported trust. The enrichment fields are optional
+ * so a plain Authority is still assignable to ValidatedAuthority.
+ */
+export interface ValidatedAuthority extends Authority {
+    /** Independently verified trust level (overrides Claude's `trust`). */
+    trust_level?: "VERIFIED" | "CHECK" | "QUARANTINED";
+    /** Whether the citation matched a verified authority exactly. */
+    verified?: boolean;
+    /** Human-readable explanation of the validation outcome. */
+    validation_reason?: string;
+    /** Short name of the matched verified authority, if any. */
+    matched_case?: string;
 }
 
 export interface StatutoryProvision {

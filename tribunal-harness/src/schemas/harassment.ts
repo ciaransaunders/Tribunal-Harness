@@ -1,5 +1,5 @@
 import type { ClaimSchema } from "./types";
-import { ERA_2025 } from "@/lib/constants";
+import { ERA_2025, formatCommencementMonth } from "@/lib/constants";
 
 export const harassmentSchema: ClaimSchema = {
     id: "harassment",
@@ -19,10 +19,10 @@ export const harassmentSchema: ClaimSchema = {
         "Land Registry v Grant [2011] ICR 1390",
     ],
     era2025Changes: [
-        'Employer duty changes from "reasonable steps" to "all reasonable steps" (from October 2026)',
-        "Third-party harassment liability introduced (from October 2026)",
-        "NDAs preventing disclosure of harassment/discrimination are void (from October 2026)",
-        "Sexual harassment becomes qualifying disclosure for whistleblowing (from April 2026)",
+        `Employer duty changes from "reasonable steps" to "all reasonable steps" (from ${formatCommencementMonth(ERA_2025.HARASSMENT_ALL_REASONABLE_STEPS)})`,
+        `Third-party harassment liability introduced (from ${formatCommencementMonth(ERA_2025.THIRD_PARTY_HARASSMENT)})`,
+        `NDAs preventing disclosure of harassment/discrimination are void (from ${formatCommencementMonth(ERA_2025.NDA_VOID)})`,
+        `Sexual harassment becomes qualifying disclosure for whistleblowing (from ${formatCommencementMonth(ERA_2025.SEXUAL_HARASSMENT_WHISTLEBLOWING)})`,
     ],
     fields: [
         {
@@ -51,7 +51,7 @@ export const harassmentSchema: ClaimSchema = {
             helpText: "Was the harassment committed by a third party (customer, client, contractor)?",
             era2025: {
                 isNew: true, commencementDate: ERA_2025.THIRD_PARTY_HARASSMENT, status: "upcoming",
-                note: "Employers liable for third-party harassment unless 'all reasonable steps' taken. From October 2026.",
+                note: `Employers liable for third-party harassment unless 'all reasonable steps' taken. From ${formatCommencementMonth(ERA_2025.THIRD_PARTY_HARASSMENT)}.`,
             },
         },
         {
@@ -65,7 +65,7 @@ export const harassmentSchema: ClaimSchema = {
             era2025: {
                 isNew: false, changedFrom: '"reasonable steps" defence',
                 commencementDate: ERA_2025.HARASSMENT_ALL_REASONABLE_STEPS, status: "upcoming",
-                note: 'Standard rises to "all reasonable steps" from October 2026.',
+                note: `Standard rises to "all reasonable steps" from ${formatCommencementMonth(ERA_2025.HARASSMENT_ALL_REASONABLE_STEPS)}.`,
             },
         },
         {
@@ -73,7 +73,7 @@ export const harassmentSchema: ClaimSchema = {
             helpText: "Does any agreement prevent you from speaking about the harassment?",
             era2025: {
                 isNew: true, commencementDate: ERA_2025.NDA_VOID, status: "upcoming",
-                note: "Any NDA preventing disclosure of harassment/discrimination is void from October 2026.",
+                note: `Any NDA preventing disclosure of harassment/discrimination is void from ${formatCommencementMonth(ERA_2025.NDA_VOID)}.`,
             },
         },
         { id: "narrative", label: "Full Account", type: "textarea", required: false },

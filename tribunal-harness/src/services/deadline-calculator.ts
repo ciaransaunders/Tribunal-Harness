@@ -4,9 +4,11 @@ import type { DeadlineResult } from "@/schemas/types";
 /**
  * Deadline Calculator — UK Employment Tribunal
  *
- * Applies the correct time limit regime based on ERA 2025:
- * - Pre-October 2026: 3 months less 1 day from the act complained of
- * - Post-October 2026: 6 months less 1 day (ERA 2025 amendment)
+ * Applies the correct time limit regime based on ERA 2025. The commencement
+ * date is read from TIME_LIMIT_CONFIG.COMMENCEMENT_DATE in constants.ts (the
+ * single source of truth) — never hardcode it here:
+ * - Before commencement: 3 months less 1 day from the act complained of
+ * - On or after commencement: 6 months less 1 day (ERA 2025 amendment)
  *
  * ACAS early conciliation clock-stopping (s207B ERA 1996):
  * - Clock stops on Day A (EC notification to ACAS)

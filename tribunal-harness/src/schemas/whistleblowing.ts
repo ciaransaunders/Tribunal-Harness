@@ -1,5 +1,5 @@
 import type { ClaimSchema } from "./types";
-import { ERA_2025 } from "@/lib/constants";
+import { ERA_2025, formatCommencementMonth } from "@/lib/constants";
 
 export const whistleblowingSchema: ClaimSchema = {
     id: "whistleblowing",
@@ -20,7 +20,7 @@ export const whistleblowingSchema: ClaimSchema = {
         "Babula v Waltham Forest College [2007] ICR 1026",
     ],
     era2025Changes: [
-        "Sexual harassment disclosures are now a qualifying disclosure category (from April 2026)",
+        `Sexual harassment disclosures are now a qualifying disclosure category (from ${formatCommencementMonth(ERA_2025.SEXUAL_HARASSMENT_WHISTLEBLOWING)})`,
     ],
     fields: [
         {
@@ -40,7 +40,7 @@ export const whistleblowingSchema: ClaimSchema = {
             helpText: "Does the disclosure relate to sexual harassment?",
             era2025: {
                 isNew: true, commencementDate: ERA_2025.SEXUAL_HARASSMENT_WHISTLEBLOWING, status: "in_force",
-                note: "Sexual harassment is now a separate qualifying disclosure from April 2026. Creates dual-track claim possibility.",
+                note: `Sexual harassment is now a separate qualifying disclosure from ${formatCommencementMonth(ERA_2025.SEXUAL_HARASSMENT_WHISTLEBLOWING)}. Creates dual-track claim possibility.`,
             },
         },
         { id: "disclosure_date", label: "Date of Disclosure", type: "date", required: true },

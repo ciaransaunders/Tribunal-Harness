@@ -294,3 +294,31 @@ export const FSM_STATES = [
 ] as const;
 
 export type FSMState = (typeof FSM_STATES)[number];
+
+// ---------------------------------------------------------------------------
+// ERA 2025 date formatting helpers
+// Use these to render commencement dates in user-facing copy so that the
+// displayed date always derives from the ERA_2025 constants above — never
+// hardcode a commencement date string elsewhere in the codebase.
+//
+// - formatCommencementDate  → "1 January 2027"   (full date, for CONFIRMED dates)
+// - formatCommencementMonth → "January 2027"     (month + year, for dates whose
+//                              exact day is TBC by Statutory Instrument — avoids
+//                              asserting a precise day the SI has not confirmed)
+// ---------------------------------------------------------------------------
+export function formatCommencementDate(iso: string): string {
+    return new Intl.DateTimeFormat("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC",
+    }).format(new Date(iso));
+}
+
+export function formatCommencementMonth(iso: string): string {
+    return new Intl.DateTimeFormat("en-GB", {
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC",
+    }).format(new Date(iso));
+}

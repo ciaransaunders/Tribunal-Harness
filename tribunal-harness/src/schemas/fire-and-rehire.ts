@@ -1,5 +1,5 @@
 import type { ClaimSchema } from "./types";
-import { ERA_2025 } from "@/lib/constants";
+import { ERA_2025, formatCommencementMonth, formatCommencementDate } from "@/lib/constants";
 
 export const fireAndRehireSchema: ClaimSchema = {
     id: "fire_and_rehire",
@@ -17,7 +17,7 @@ export const fireAndRehireSchema: ClaimSchema = {
         "This is a new statutory provision — case law will develop from 2027",
     ],
     era2025Changes: [
-        "Entirely new claim type created by ERA 2025 (from January 2027)",
+        `Entirely new claim type created by ERA 2025 (from ${formatCommencementMonth(ERA_2025.FIRE_AND_REHIRE_AUTO_UNFAIR)})`,
         "Dismissals to impose restricted variations are automatically unfair",
         "Limited defence: employer must prove severe financial distress AND no alternative",
     ],
@@ -26,7 +26,7 @@ export const fireAndRehireSchema: ClaimSchema = {
             id: "effective_date_of_termination", label: "Date of Dismissal", type: "date", required: true,
             era2025: {
                 isNew: true, commencementDate: ERA_2025.FIRE_AND_REHIRE_AUTO_UNFAIR, status: "upcoming",
-                note: "This claim type is only available for dismissals on or after 1 January 2027.",
+                note: `This claim type is only available for dismissals on or after ${formatCommencementDate(ERA_2025.FIRE_AND_REHIRE_AUTO_UNFAIR)}.`,
             },
         },
         {
