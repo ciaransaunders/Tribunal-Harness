@@ -301,3 +301,95 @@ describe("GET /api/case-law/search", () => {
         });
     });
 });
+
+// ---------------------------------------------------------------------------
+// /api/request-access
+// ---------------------------------------------------------------------------
+describe("POST /api/request-access", () => {
+    let POST: (req: NextRequest) => Promise<Response>;
+
+    beforeEach(async () => {
+        const mod = await import("../app/api/request-access/route");
+        POST = mod.POST;
+    });
+
+    it("returns 400 for invalid JSON payload", async () => {
+        const req = new NextRequest("http://localhost:3000/api/request-access", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: "{ bad json",
+        });
+        const res = await POST(req);
+        expect(res.status).toBe(400);
+        const json = await res.json();
+        expect(json.error).toBe("Invalid request payload");
+    });
+
+    it("returns 400 if required fields are missing", async () => {
+        const req = makeRequest({ name: "John" }); // missing email and user_type
+        const res = await POST(req);
+        expect(res.status).toBe(400);
+        const json = await res.json();
+        expect(json.error).toBe("name, email, and user_type are required");
+    });
+
+    it("returns 400 for invalid email format", async () => {
+        const req = makeRequest({ name: "John", email: "notanemail", user_type: "lip" });
+        const res = await POST(req);
+        expect(res.status).toBe(400);
+        const json = await res.json();
+        expect(json.error).toBe("Invalid email format");
+    });
+
+    it("returns 400 for invalid user_type", async () => {
+        const req = makeRequest({ name: "John", email: "john@example.com", user_type: "invalid_type" });
+        const res = await POST(req);
+        expect(res.status).toBe(400);
+        const json = await res.json();
+        expect(json.error).toBe("user_type must be one of: lip, solicitor, legal_aid, researcher, other");
+    });
+
+    it("returns 200 for valid payload", async () => {
+        const req = makeRequest({ name: "John", email: "john@example.com", user_type: "lip" });
+        const res = await POST(req);
+        expect(res.status).toBe(200);
+        const json = await res.json();
+        expect(json.success).toBe(true);
+        expect(json.message).toBe("Thank you for your interest. We will be in touch when Tribunal Harness launches.");
+    });
+
+    it("handles failed email sending gracefully (non-blocking)", async () => {
+        // We can simulate an error during fetch by mocking the global fetch.
+        const originalFetch = global.fetch;
+        const originalApiKey = process.env.RESEND_API_KEY;
+        const originalNotifyEmail = process.env.NOTIFY_EMAIL;
+
+        global.fetch = vi.fn().mockRejectedValue(new Error("Email service down"));
+
+        const req = makeRequest({ name: "John", email: "john@example.com", user_type: "lip" });
+
+        // Ensure API key is set so it attempts to send email
+        process.env.RESEND_API_KEY = "test_key";
+        process.env.NOTIFY_EMAIL = "notify@example.com";
+
+        const res = await POST(req);
+        expect(res.status).toBe(200); // Should still return 200 because email sending is non-blocking
+        const json = await res.json();
+        expect(json.success).toBe(true);
+
+        // Restore fetch and env
+        global.fetch = originalFetch;
+
+        if (originalApiKey !== undefined) {
+            process.env.RESEND_API_KEY = originalApiKey;
+        } else {
+            delete process.env.RESEND_API_KEY;
+        }
+
+        if (originalNotifyEmail !== undefined) {
+            process.env.NOTIFY_EMAIL = originalNotifyEmail;
+        } else {
+            delete process.env.NOTIFY_EMAIL;
+        }
+    });
+});

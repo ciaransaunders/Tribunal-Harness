@@ -64,7 +64,17 @@ async function sendEmailNotification(data: Record<string, unknown>): Promise<voi
 
 export async function POST(request: NextRequest) {
     try {
-        const body = await request.json();
+        let body;
+        try {
+            body = await request.json();
+        } catch (err) {
+            console.error("[RequestAccess] Failed to parse request body", err);
+            return NextResponse.json(
+                { error: "Invalid request payload" },
+                { status: 400 }
+            );
+        }
+
         const { name, email, user_type, description } = body;
 
         // Validate required fields
