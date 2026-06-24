@@ -297,10 +297,3 @@ models reason far better over Markdown than raw PDF bytes.
 - **Response-shape drifts** (smoke harness already normalises both): `/api/deadlines` returns `time_limit_regime: "pre_era_2025" | "post_era_2025"` and `original_deadline` (not `regime` / `deadline_date`); `/api/era-2025/tracker` returns `{ changes: [...] }` (not `{ tracker: [...] }`). Reconcile when the UI is wired through.
 
 ---
-
-## Contact
-
-- General: `hello@tribunalharness.co.uk`
-- Data protection: `dpo@tribunalharness.co.uk`
-- Legal aid: `legalaid@tribunalharness.co.uk`
-- Dev: `dev@tribunalharness.co.uk`
